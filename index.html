@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>OpenAI API Example</title>
+</head>
+<body>
+  <h1>OpenAI API Example</h1>
+  <div>
+    <label for="prompt">Enter a prompt:</label>
+    <input type="text" id="prompt">
+    <button id="generate">Generate</button>
+  </div>
+  <div>
+    <h2>Response:</h2>
+    <pre id="response"></pre>
+  </div>
+  <script>
+
+    const apiKey = "REPLACE WITH YOUR API KEY";
+    const apiUrl = 'https://api.openai.com/v1/engines/text-davinci-003/completions';
+
+    const promptInput = document.getElementById('prompt');
+    const generateButton = document.getElementById('generate');
+    const responseElement = document.getElementById('response');
+
+    //Assuming we fetch from the database
+    const personality = {
+        name: "happy",
+        tone: "angry",
+        maxLenght: 8 //How many words
+    };
+
+    generateButton.addEventListener('click', () => {
+    const prompt = promptInput.value.trim();
+    if (prompt) {
+        fetch(apiUrl, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${apiKey}`,
+        },
+        body: JSON.stringify({
+            prompt: `Q: ${prompt}`+ "answer this question with angry personality and max 10 words" +`\nA:`,
+            max_tokens: 1000,//Limit
+            n: 1,
+            stop: '\n'
+        })
+        })
+        .then(response => response.json())
+        .then(data => {
+            const generatedText = data.choices[0].text;
+            responseElement.textContent = generatedText.replace(/A:/g, '').trim();
+        })
+        .catch(error => {
+            responseElement.textContent = `Error: ${error.message}`;
+        });
+    }
+    });
+
+
+  </script>
+</body>
+</html>
