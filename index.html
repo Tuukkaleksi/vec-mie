@@ -2,36 +2,102 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>OpenAI API Example</title>
+  <title>OpenAI API</title>
 </head>
 <body>
-  <h1>OpenAI API Example</h1>
+  <h1>OpenAI API</h1>
   <div>
+    <h3 style="position:relative;margin: 0px;padding: 0px;">Selected Personality:</h3>
+    <p id="selected-personality"></p>
+  </div>
+  <div>
+    <h3 style="position:relative;margin: 0px;padding: 0px;">Selected Question:</h3>
+    <p id="selected-question"></p>
+  </div>
+
+  <br>
+  <hr>
+  <br>
+    <h2>Both uses generated personality</h2>
+  <div>
+    <h3>Generate Using Automatic Response</h3>
+    <h3>Response:</h3>
+    <pre id="response1"></pre>
+  </div>
+
+  <br>
+  <hr>
+  <br>
+
+<!--   <div>
+    <h3>Generate Using Prompt</h3>
     <label for="prompt">Enter a prompt:</label>
     <input type="text" id="prompt">
     <button id="generate">Generate</button>
   </div>
   <div>
-    <h2>Response:</h2>
+    <h3>Response:</h3>
     <pre id="response"></pre>
-  </div>
+  </div> -->
   <script>
-
-    const apiKey = "REPLACE WITH YOUR API KEY";
+    const apiKey = "";
     const apiUrl = 'https://api.openai.com/v1/engines/text-davinci-003/completions';
 
     const promptInput = document.getElementById('prompt');
     const generateButton = document.getElementById('generate');
-    const responseElement = document.getElementById('response');
+    const responseElement = document.getElementById('response1');
 
     //Assuming we fetch from the database
-    const personality = {
-        name: "happy",
-        tone: "angry",
-        maxLenght: 8 //How many words
-    };
+    const persoonaTyypit = [
+      ['masentunut', 'masentuneen'],
+      ['iloinen', 'iloisen'],
+      ['tyhmä', 'tyhmän']
+    ]
 
-    generateButton.addEventListener('click', () => {
+    //Questions
+    const questions = [
+      ["Mitä ruokana?"],
+      ["Kuka siellä?"],
+      ["Halloween?"]
+    ]
+
+     // Get random index values
+    const randomQuestionIndex = Math.floor(Math.random() * questions.length);
+    const randomPersonalityIndex = Math.floor(Math.random() * persoonaTyypit.length);
+    const selectedQuestion = questions[randomQuestionIndex][0];
+    const selectedPersonality = persoonaTyypit[randomPersonalityIndex][0];
+
+    // Set the selected personality and question in the HTML
+    document.getElementById('selected-personality').textContent = selectedPersonality;
+    document.getElementById('selected-question').textContent = selectedQuestion;
+
+    // Construct the prompt
+    const prompt = `Q: ${selectedQuestion} vastaa tähän kysymykseen ${selectedPersonality} persoonalla ja maksimissaan 20 sanalla. \nA:`;
+
+    // Call the API to generate the response
+    fetch(apiUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${apiKey}`,
+      },
+      body: JSON.stringify({
+        prompt: prompt,
+        max_tokens: 1000, // Limit
+        n: 1,
+        stop: '\n'
+      })
+    })
+      .then(response => response.json())
+      .then(data => {
+        const generatedText = data.choices[0].text;
+        responseElement.textContent = generatedText.replace(/A:/g, '').trim();
+      })
+      .catch(error => {
+        responseElement.textContent = `Error: ${error.message}`;
+    });
+
+/*     generateButton.addEventListener('click', () => {
     const prompt = promptInput.value.trim();
     if (prompt) {
         fetch(apiUrl, {
@@ -41,7 +107,12 @@
             'Authorization': `Bearer ${apiKey}`,
         },
         body: JSON.stringify({
-            prompt: `Q: ${prompt}`+ "answer this question with angry personality and max 10 words" +`\nA:`,
+          //Normal
+            //prompt: `Q: ${prompt}`+ "answer this question with dumb personality and max 10 words" +`\nA:`,
+          //Selected Personality
+            //prompt: `Q: ${prompt}`+ `answer this question with ${selectedPersonality} personality and max 10 words` +`\nA:`,
+          //Selected Personality and Question
+            prompt: prompt,
             max_tokens: 1000,//Limit
             n: 1,
             stop: '\n'
@@ -56,9 +127,7 @@
             responseElement.textContent = `Error: ${error.message}`;
         });
     }
-    });
-
-
+    }); */
   </script>
 </body>
 </html>
