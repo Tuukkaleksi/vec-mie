@@ -109,6 +109,11 @@ h3 {
   font-weight: 700;
 }
 
+.huomio {
+  color: red;
+  font-size: 22px;
+ }
+
 .card {
   display: flex;
   width: 850px;
@@ -134,10 +139,10 @@ h3 {
 }
 
 .qr-code {
-    background-image: url(/frame.png);
+    background-image: url("./images/frame.png");
     background-repeat: no-repeat;
     position: absolute;
-    top: 65%;
+    top: 70%;
     width: 231px;
     height: 231px;
     margin: 0;
@@ -149,7 +154,11 @@ h3 {
     font-size: 12px;
    }
    h3 {
-    margin-top: 7em;
+    margin-top: 4em;
+   }
+   .huomio {
+    color: red;
+    font-size: 22px;
    }
    .a-btn {
     display: inline-block;
