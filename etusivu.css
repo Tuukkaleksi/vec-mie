@@ -139,7 +139,7 @@ h3 {
 }
 
 .qr-code {
-    background-image: url("./images/frame.png");
+    background-image: url("./images/qrcode.png");
     background-repeat: no-repeat;
     position: absolute;
     top: 70%;
